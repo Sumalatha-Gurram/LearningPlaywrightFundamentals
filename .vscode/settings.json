@@ -1,0 +1,5 @@
+{
+  "testing.gutterEnabled": true,
+  "testing.defaultGutterIcon": "run",
+  "testing.codeLens": "runAndDebug"
+}
