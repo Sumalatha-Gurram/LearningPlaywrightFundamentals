@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Playwright Study Guide</title>
+    <style>
+      :root {
+        --bg: #08141f;
+        --bg2: #0f1d2d;
+        --panel: rgba(18, 31, 50, 0.94);
+        --soft: #edf5ff;
+        --muted: #b9c7dc;
+        --line: rgba(136, 164, 212, 0.28);
+        --blue: #73aefc;
+        --cyan: #6fe4d6;
+        --green: #7de4a2;
+        --purple: #b7a9ff;
+        --orange: #ffd27d;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(115, 174, 252, 0.18), transparent 30%),
+          linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+        color: var(--soft);
+      }
+
+      body {
+        padding: 24px 20px 50px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .nav {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .nav a {
+        text-decoration: none;
+        color: var(--soft);
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-weight: 600;
+      }
+
+      .nav a.primary {
+        background: rgba(115, 174, 252, 0.12);
+        color: var(--blue);
+      }
+
+      .hero {
+        background: rgba(17, 28, 45, 0.94);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 38px 28px;
+        box-shadow: 0 22px 50px rgba(0,0,0,0.18);
+      }
+
+      .badge {
+        display: inline-block;
+        background: rgba(115, 174, 252, 0.12);
+        color: var(--blue);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 18px 0 12px;
+        font-size: clamp(2.4rem, 4vw, 4.5rem);
+        line-height: 1.08;
+        letter-spacing: -0.05em;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 1.08rem;
+        line-height: 1.7;
+        max-width: 840px;
+      }
+
+      .grid {
+        margin-top: 28px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 22px;
+      }
+
+      .card {
+        background: rgba(18, 31, 50, 0.94);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 22px 18px;
+      }
+
+      .card h2 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.35rem;
+      }
+
+      .card p {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .card a {
+        display: inline-block;
+        margin-top: 8px;
+        color: var(--blue);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .stats {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+      }
+
+      .stat {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px 16px;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 1.7rem;
+        color: var(--cyan);
+      }
+
+      .stat span {
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="nav">
+        <a class="primary" href="index.html">Home</a>
+        <a href="playwright-architecture.html">Architecture</a>
+        <a href="playwright-vs-selenium.html">Comparison</a>
+        <a href="final-presentation.html">Presentation</a>
+      </nav>
+
+      <header class="hero">
+        <div class="badge">Playwright study kit</div>
+        <h1>Learn Playwright from architecture to comparison</h1>
+        <p class="subtitle">
+          This guide explains the Playwright architecture, highlights how it works under the hood,
+          compares it with Selenium, and provides a clean presentation version for class or demo use.
+        </p>
+      </header>
+
+      <section class="grid">
+        <article class="card">
+          <h2>Architecture</h2>
+          <p>Understand the layers behind Playwright, from test code to browser engine execution and DOM interaction.</p>
+          <a href="playwright-architecture.html">Open architecture page →</a>
+        </article>
+
+        <article class="card">
+          <h2>Comparison</h2>
+          <p>See how Playwright differs from Selenium in speed, waiting behavior, debugging, and project fit.</p>
+          <a href="playwright-vs-selenium.html">Open comparison page →</a>
+        </article>
+
+        <article class="card">
+          <h2>Presentation</h2>
+          <p>Use the final slide-style page for a clear, concise summary you can present visually.</p>
+          <a href="final-presentation.html">Open presentation page →</a>
+        </article>
+      </section>
+
+      <section class="stats">
+        <div class="stat">
+          <strong>4</strong>
+          <span>Pages</span>
+        </div>
+        <div class="stat">
+          <strong>1</strong>
+          <span>Architecture topic</span>
+        </div>
+        <div class="stat">
+          <strong>1</strong>
+          <span>Comparison topic</span>
+        </div>
+        <div class="stat">
+          <strong>1</strong>
+          <span>Presentation view</span>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

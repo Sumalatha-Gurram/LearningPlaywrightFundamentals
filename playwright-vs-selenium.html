@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Playwright vs Selenium</title>
+    <style>
+      :root {
+        --bg: #0a1220;
+        --bg2: #101d2f;
+        --card: rgba(18, 31, 51, 0.94);
+        --soft: #edf5ff;
+        --muted: #b7c9e2;
+        --line: rgba(137, 164, 214, 0.25);
+        --blue: #6aa8ff;
+        --cyan: #63e3d6;
+        --green: #7adca4;
+        --purple: #b9a8ff;
+        --orange: #ffc978;
+        --red: #ff8f8f;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(106, 168, 255, 0.16), transparent 25%),
+          linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+        color: var(--soft);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 36px 20px 80px;
+      }
+
+      .hero {
+        padding-top: 18px;
+      }
+
+      .badge {
+        display: inline-block;
+        background: rgba(106, 168, 255, 0.12);
+        color: var(--blue);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        font-size: clamp(2.3rem, 4vw, 4rem);
+        margin: 18px 0 14px;
+        letter-spacing: -0.04em;
+      }
+
+      .subtitle {
+        max-width: 760px;
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 1.08rem;
+      }
+
+      .comparison {
+        margin-top: 28px;
+        overflow: hidden;
+        border-radius: 22px;
+        border: 1px solid var(--line);
+        background: rgba(18, 31, 51, 0.92);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.22);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th, td {
+        text-align: left;
+        padding: 18px 18px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+
+      th {
+        background: rgba(106, 168, 255, 0.1);
+        font-size: 1rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--blue);
+      }
+
+      td {
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .good {
+        color: var(--green);
+        font-weight: 700;
+      }
+
+      .neutral {
+        color: var(--orange);
+        font-weight: 700;
+      }
+
+      .highlight {
+        background: rgba(99, 227, 214, 0.06);
+      }
+
+      .cards {
+        margin-top: 36px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 22px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 20px 18px;
+      }
+
+      .card h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+      }
+
+      .card p, .card li {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .section-title {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        margin: 42px 0 14px;
+      }
+
+      @media (max-width: 700px) {
+        th, td {
+          font-size: 0.92rem;
+          padding: 14px 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="hero">
+        <div class="badge">Playwright vs Selenium</div>
+        <h1>Which one is better for modern web automation?</h1>
+        <p class="subtitle">
+          Playwright and Selenium both automate browser actions, but they differ greatly in design,
+          execution model, and developer experience. Playwright is often preferred for modern end-to-end testing,
+          while Selenium remains widely used in cross-tool ecosystems and legacy setups.
+        </p>
+      </header>
+
+      <section class="comparison">
+        <table>
+          <thead>
+            <tr>
+              <th>Area</th>
+              <th>Playwright</th>
+              <th>Selenium</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Core model</td>
+              <td>Modern automation framework built for browser APIs and protocol-based control.</td>
+              <td>WebDriver-based automation with older driver architecture and broader compatibility focus.</td>
+            </tr>
+            <tr class="highlight">
+              <td>Browser support</td>
+              <td><span class="good">Excellent</span> for Chromium, Firefox, and WebKit with one API.</td>
+              <td>Strong, but often requires different drivers or configuration across browsers.</td>
+            </tr>
+            <tr>
+              <td>Auto-waiting</td>
+              <td><span class="good">Built-in</span> waiting and retry behavior reduces flaky tests.</td>
+              <td>Usually needs explicit waits and more test logic to handle timing issues.</td>
+            </tr>
+            <tr class="highlight">
+              <td>Performance</td>
+              <td><span class="good">Fast</span> and efficient with protocol-level control.</td>
+              <td>Can be slower due to the WebDriver layer and more abstraction overhead.</td>
+            </tr>
+            <tr>
+              <td>Tracing & debugging</td>
+              <td><span class="good">Very strong</span> with trace viewer, screenshots, and video capture.</td>
+              <td>Available, but usually less integrated and less modern in workflow.</td>
+            </tr>
+            <tr class="highlight">
+              <td>Network interception</td>
+              <td><span class="good">Built-in</span> support for mocking, intercepting, and inspecting network traffic.</td>
+              <td>Possible, but commonly requires more custom setup and workarounds.</td>
+            </tr>
+            <tr>
+              <td>Parallel execution</td>
+              <td>Great for CI with browser contexts and isolated workers.</td>
+              <td>Also supports parallel runs, but often with more orchestration complexity.</td>
+            </tr>
+            <tr class="highlight">
+              <td>Ease of learning</td>
+              <td><span class="good">Very developer-friendly</span> and concise API.</td>
+              <td>Familiar for many teams, but sometimes more verbose and less intuitive.</td>
+            </tr>
+            <tr>
+              <td>Best for</td>
+              <td>Modern E2E testing, UI automation, web app validation, CI pipelines.</td>
+              <td>Legacy projects, broad ecosystem compatibility, existing Selenium-based frameworks.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2 class="section-title">Key differences</h2>
+        <div class="cards">
+          <article class="card">
+            <h3>Playwright strengths</h3>
+            <ul>
+              <li>One API for Chromium, Firefox, and WebKit</li>
+              <li>Automatic waiting reduces flaky test behavior</li>
+              <li>Better out-of-the-box debugging and trace reporting</li>
+              <li>Excellent for modern front-end applications</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3>Selenium strengths</h3>
+            <ul>
+              <li>Very mature ecosystem and long-standing adoption</li>
+              <li>Works with many tools, frameworks, and languages</li>
+              <li>Useful in legacy and enterprise automation environments</li>
+              <li>Strong compatibility with older browser testing setups</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Simple conclusion</h2>
+        <div class="card">
+          <p>
+            Playwright is usually the better choice for new projects because it is faster, more stable,
+            and more modern. Selenium remains relevant for teams that already depend on the Selenium ecosystem,
+            but Playwright often provides a smoother and more productive automation experience.
+          </p>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

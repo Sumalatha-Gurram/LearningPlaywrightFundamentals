@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Playwright Architecture</title>
+    <style>
+      :root {
+        --bg: #07111f;
+        --bg-soft: #101b2d;
+        --panel: rgba(18, 29, 48, 0.9);
+        --card: rgba(26, 40, 67, 0.95);
+        --soft: #edf5ff;
+        --muted: #b5c4dc;
+        --line: rgba(130, 161, 214, 0.27);
+        --blue: #67a9ff;
+        --cyan: #63e6d8;
+        --green: #70e0a1;
+        --purple: #b8a6ff;
+        --orange: #ffd67d;
+        --shadow: rgba(0, 0, 0, 0.28);
+      }
+
+      * { box-sizing: border-box; }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(103, 169, 255, 0.18), transparent 25%),
+          radial-gradient(circle at bottom right, rgba(99, 230, 216, 0.12), transparent 30%),
+          linear-gradient(180deg, var(--bg) 0%, #0d1627 100%);
+        color: var(--soft);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 36px 20px 80px;
+      }
+
+      .hero {
+        padding: 24px 0 10px;
+      }
+
+      .hero h1 {
+        margin: 0 0 14px;
+        font-size: clamp(2.4rem, 4vw, 4.2rem);
+        line-height: 1.1;
+        letter-spacing: -0.04em;
+      }
+
+      .subtitle {
+        max-width: 780px;
+        color: var(--muted);
+        font-size: 1.08rem;
+        line-height: 1.75;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 9px 16px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(103, 169, 255, 0.12);
+        color: var(--blue);
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+      }
+
+      .diagram {
+        margin: 36px 0 32px;
+        background: rgba(18, 29, 48, 0.72);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 22px;
+        box-shadow: 0 20px 50px var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .diagram::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(103,169,255,0.04), rgba(99,230,216,0.04), rgba(184,166,255,0.04));
+        pointer-events: none;
+      }
+
+      .flow {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(7, minmax(120px, 1fr));
+        gap: 12px;
+        align-items: center;
+      }
+
+      .node {
+        border-radius: 16px;
+        padding: 18px 14px;
+        min-height: 110px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-weight: 700;
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+        animation: floatCard 4s ease-in-out infinite alternate;
+      }
+
+      .node:nth-child(1) { animation-delay: 0.1s; }
+      .node:nth-child(3) { animation-delay: 0.4s; }
+      .node:nth-child(5) { animation-delay: 0.7s; }
+      .node:nth-child(7) { animation-delay: 1s; }
+
+      .node.blue { background: rgba(103, 169, 255, 0.18); color: #e6f0ff; }
+      .node.cyan { background: rgba(99, 230, 216, 0.14); color: #ddfff8; }
+      .node.green { background: rgba(112, 224, 161, 0.14); color: #dcffe9; }
+      .node.purple { background: rgba(184, 166, 255, 0.16); color: #f3eeff; }
+      .node.orange { background: rgba(255, 214, 125, 0.12); color: #fff2ca; }
+
+      .arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: var(--muted);
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 22px;
+        margin-top: 28px;
+      }
+
+      .card {
+        background: linear-gradient(180deg, rgba(26, 40, 67, 0.96), rgba(18, 29, 48, 0.96));
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 20px 18px 18px;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+      }
+
+      .card h3 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        font-size: 1.2rem;
+      }
+
+      .card p, .card li {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .section-title {
+        margin-top: 46px;
+        margin-bottom: 12px;
+        font-size: clamp(1.5rem, 3vw, 2rem);
+      }
+
+      .callout {
+        border-left: 4px solid var(--cyan);
+        background: rgba(99, 230, 216, 0.08);
+        padding: 18px 20px;
+        border-radius: 12px;
+        color: var(--soft);
+        margin-top: 18px;
+        line-height: 1.7;
+      }
+
+      .stack {
+        display: grid;
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .layer {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 16px;
+        align-items: center;
+        background: rgba(17, 27, 44, 0.78);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px 18px;
+      }
+
+      .layer .index {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 52px;
+        border-radius: 12px;
+        font-weight: 700;
+        background: rgba(103, 169, 255, 0.12);
+        color: var(--blue);
+      }
+
+      .layer strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 1.05rem;
+      }
+
+      code {
+        font-family: Consolas, Monaco, monospace;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 2px 8px;
+        color: #dfeeff;
+      }
+
+      @keyframes floatCard {
+        0% { transform: translateY(0px); }
+        100% { transform: translateY(-5px); }
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 0.7; transform: translateX(0); }
+        50% { opacity: 1; transform: translateX(3px); }
+      }
+
+      @media (max-width: 760px) {
+        .flow {
+          grid-template-columns: 1fr;
+        }
+
+        .arrow {
+          transform: rotate(90deg);
+        }
+
+        .layer {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="hero">
+        <div class="badge">Playwright architecture</div>
+        <h1>How Playwright works under the hood</h1>
+        <p class="subtitle">
+          Playwright is a modern browser automation framework designed around a thin JavaScript API,
+          a browser-driver layer, and real browser engines. It gives developers a fast, stable way to
+          automate Chromium, Firefox, and WebKit with a consistent API.
+        </p>
+      </header>
+
+      <section class="diagram" aria-label="Playwright architecture diagram">
+        <div class="flow">
+          <div class="node blue">Test / App code</div>
+          <div class="arrow">→</div>
+          <div class="node cyan">Playwright library</div>
+          <div class="arrow">→</div>
+          <div class="node green">Browser launcher</div>
+          <div class="arrow">→</div>
+          <div class="node purple">Browser process</div>
+          <div class="arrow">→</div>
+          <div class="node orange">Page / Context / DOM</div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Core idea</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>1. API layer</h3>
+            <p>
+              Your test or script runs in Node.js and calls Playwright APIs such as
+              <code>chromium.launch()</code>, <code>page.goto()</code>, and <code>locator.click()</code>.
+              This layer is designed to be simple, flexible, and cross-browser.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>2. Browser automation layer</h3>
+            <p>
+              Playwright communicates with each browser over a protocol. For Chromium it commonly uses
+              the DevTools Protocol (CDP), while Firefox and WebKit use browser-specific protocol layers.
+              The library translates high-level actions into protocol commands.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>3. Browser process</h3>
+            <p>
+              Playwright launches a real browser instance. Each browser is separated from your app, and
+              each test can create isolated browser contexts that behave like separate users or sessions.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>4. Page and DOM model</h3>
+            <p>
+              A browser context contains pages. Each page has frames, selectors, network events, and the
+              DOM. Playwright inspects the page and sends commands to interact with elements reliably.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Layered architecture</h2>
+        <div class="stack">
+          <div class="layer">
+            <div class="index">Layer 1</div>
+            <div>
+              <strong>Test / app layer</strong>
+              Your automation code defines steps, assertions, and scenarios. It uses Playwright as a clean and expressive interface.
+            </div>
+          </div>
+
+          <div class="layer">
+            <div class="index">Layer 2</div>
+            <div>
+              <strong>Automation runtime</strong>
+              Playwright handles events, waits, selectors, network control, and browser orchestration behind the scenes.
+            </div>
+          </div>
+
+          <div class="layer">
+            <div class="index">Layer 3</div>
+            <div>
+              <strong>Browser engine</strong>
+              Chromium, Firefox, or WebKit runs the real web page in a browser process, which acts as the actual execution environment.
+            </div>
+          </div>
+
+          <div class="layer">
+            <div class="index">Layer 4</div>
+            <div>
+              <strong>UI object model</strong>
+              Playwright interacts with pages, frames, DOM elements, and browser state to perform actions and validate output.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Important building blocks</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Browser</h3>
+            <ul>
+              <li>Represents the actual browser instance.</li>
+              <li>Can launch Chromium, Firefox, or WebKit.</li>
+              <li>Owns browser-level configuration and process lifecycle.</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3>BrowserContext</h3>
+            <ul>
+              <li>Isolated environment for a user session.</li>
+              <li>Has separate cookies, storage, and permissions.</li>
+              <li>One browser can host multiple contexts.</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3>Page</h3>
+            <ul>
+              <li>Represents a single tab or document.</li>
+              <li>Handles navigation, actions, and element interactions.</li>
+              <li>Can be opened, closed, and re-used inside a context.</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3>Locator / Frame</h3>
+            <ul>
+              <li>Locators target UI elements using selectors and auto-waits.</li>
+              <li>Frames represent nested documents inside a page.</li>
+              <li>Playwright uses a robust abstraction for cross-origin and iframe work.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Why Playwright is powerful</h2>
+        <div class="callout">
+          Playwright is not just a simple wrapper around browser APIs. It adds a stable automation layer
+          with auto-waiting, built-in retry logic, network interception, traces, and multi-browser support.
+          This makes it especially useful for end-to-end testing, UI validation, and browser automation jobs.
+        </div>
+
+        <div class="grid">
+          <article class="card">
+            <h3>Auto-retry & waiting</h3>
+            <p>
+              Playwright waits for elements to be actionable before interacting, which reduces flaky tests.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Isolation</h3>
+            <p>
+              Each browser context is isolated, making it easier to test real user flows without leaking state.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Cross-browser support</h3>
+            <p>
+              One API can target Chromium, Firefox, and WebKit with consistent semantics and behavior.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Protocol-based control</h3>
+            <p>
+              Low-level browser commands are sent through protocol channels, enabling fast and precise control.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">A simplified flow</h2>
+        <div class="card">
+          <p>
+            <strong>Test script</strong> → Playwright API → Browser launcher → Browser engine process → Context → Page → DOM/Frame/Element → user action or assertion.
+          </p>
+          <p>
+            This architecture makes Playwright reliable because the browser remains the real execution target,
+            while the library handles orchestration, event handling, and automation logic in a structured way.
+          </p>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

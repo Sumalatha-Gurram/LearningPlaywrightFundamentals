@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Playwright Presentation</title>
+    <style>
+      :root {
+        --bg: #07131f;
+        --bg2: #0f1d2d;
+        --panel: rgba(17, 28, 45, 0.92);
+        --soft: #edf5ff;
+        --muted: #b7c8e2;
+        --line: rgba(139, 166, 211, 0.25);
+        --blue: #74aafc;
+        --cyan: #6ce5d6;
+        --green: #7de3a3;
+        --purple: #b9a8ff;
+        --orange: #ffd176;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        height: 100%;
+        scroll-behavior: smooth;
+        font-family: Arial, Helvetica, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(116, 170, 252, 0.15), transparent 25%),
+          linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+        color: var(--soft);
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 28px 20px 40px;
+      }
+
+      .nav {
+        width: min(1100px, 100%);
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin-bottom: 20px;
+      }
+
+      .nav a {
+        color: var(--soft);
+        text-decoration: none;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-weight: 600;
+      }
+
+      .nav a.primary {
+        background: rgba(116,170,252,0.12);
+        color: var(--blue);
+      }
+
+      .slide {
+        width: min(1100px, 100%);
+        min-height: 90vh;
+        background: rgba(17, 28, 45, 0.92);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        box-shadow: 0 28px 80px rgba(0,0,0,0.3);
+        padding: 40px 50px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .slide::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, rgba(116,170,252,0.08), transparent 35%, rgba(108,229,214,0.08));
+        pointer-events: none;
+      }
+
+      .content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .badge {
+        display: inline-block;
+        background: rgba(116,170,252,0.12);
+        color: var(--blue);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 9px 16px;
+        font-size: 0.76rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 18px 0 12px;
+        font-size: clamp(2.5rem, 4vw, 5rem);
+        line-height: 1.06;
+        letter-spacing: -0.05em;
+      }
+
+      h2 {
+        font-size: clamp(1.8rem, 2.5vw, 2.8rem);
+        margin: 0 0 16px;
+      }
+
+      p, li {
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 1.08rem;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 26px;
+        margin-top: 20px;
+      }
+
+      .box {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px 20px;
+      }
+
+      .box strong {
+        color: var(--soft);
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(120px, 1fr));
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .node {
+        min-height: 92px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.06);
+        padding: 12px;
+        font-weight: 700;
+      }
+
+      .blue { background: rgba(116,170,252,0.18); color: #eaf3ff; }
+      .cyan { background: rgba(108,229,214,0.15); color: #e1fffb; }
+      .green { background: rgba(125,227,163,0.14); color: #e4fced; }
+      .purple { background: rgba(185,168,255,0.14); color: #f2edff; }
+      .orange { background: rgba(255,209,118,0.12); color: #fff2ce; }
+
+      .arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: var(--muted);
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+      }
+
+      .table th, .table td {
+        border: 1px solid var(--line);
+        padding: 12px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .table th {
+        color: var(--blue);
+        background: rgba(116,170,252,0.08);
+      }
+
+      .notes {
+        margin-top: 18px;
+      }
+
+      footer {
+        margin-top: 24px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 0.95rem;
+        border-top: 1px solid var(--line);
+        padding-top: 16px;
+      }
+
+      ul {
+        padding-left: 20px;
+      }
+
+      @media (max-width: 760px) {
+        .slide { padding: 28px 22px; }
+        .two-col, .flow {
+          grid-template-columns: 1fr;
+        }
+
+        .arrow {
+          transform: rotate(90deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <a class="primary" href="index.html">Home</a>
+      <a href="playwright-architecture.html">Architecture</a>
+      <a href="playwright-vs-selenium.html">Comparison</a>
+      <a href="final-presentation.html">Presentation</a>
+    </nav>
+
+    <main class="slide">
+      <div class="content">
+        <div class="badge">Playwright Presentation</div>
+        <h1>Playwright Architecture and Why It Matters</h1>
+        <p>
+          Playwright is a modern browser automation framework designed to run real browser actions reliably,
+          quickly, and in a way that works across Chromium, Firefox, and WebKit.
+        </p>
+
+        <div class="two-col">
+          <div class="box">
+            <strong>Core idea</strong>
+            Your test code calls the Playwright API, which talks to the browser through a structured protocol layer.
+            The browser executes the real interactions and returns results to the framework.
+          </div>
+          <div class="box">
+            <strong>Why teams use it</strong>
+            It offers auto-waiting, isolated browser contexts, better debugging, and a cleaner developer experience than older tooling.
+          </div>
+        </div>
+
+        <h2>Architecture flow</h2>
+        <div class="flow">
+          <div class="node blue">Test code</div>
+          <div class="arrow">→</div>
+          <div class="node cyan">Playwright API</div>
+          <div class="arrow">→</div>
+          <div class="node green">Browser Launcher</div>
+          <div class="arrow">→</div>
+          <div class="node purple">Browser Engine</div>
+          <div class="arrow">→</div>
+          <div class="node orange">Page / DOM</div>
+        </div>
+
+        <div class="notes">
+          <h2>Key components</h2>
+          <ul>
+            <li><strong>Browser:</strong> Represents the browser instance.</li>
+            <li><strong>BrowserContext:</strong> Isolated user session with separate cookies and storage.</li>
+            <li><strong>Page:</strong> One tab or document the script interacts with.</li>
+            <li><strong>Locator:</strong> A stable, auto-waiting way to find and use UI elements.</li>
+          </ul>
+        </div>
+
+        <h2>Playwright vs Selenium</h2>
+        <table class="table">
+          <tr>
+            <th>Aspect</th>
+            <th>Playwright</th>
+            <th>Selenium</th>
+          </tr>
+          <tr>
+            <td>Browser support</td>
+            <td>Strong across Chromium, Firefox, WebKit</td>
+            <td>Broad and mature, but more setup complexity</td>
+          </tr>
+          <tr>
+            <td>Waiting behavior</td>
+            <td>Built-in auto-waiting</td>
+            <td>Usually needs explicit waits</td>
+          </tr>
+          <tr>
+            <td>Debugging</td>
+            <td>Trace viewer, screenshots, video</td>
+            <td>Useful, but less integrated</td>
+          </tr>
+          <tr>
+            <td>Best fit</td>
+            <td>Modern E2E and UI automation</td>
+            <td>Legacy or established Selenium ecosystems</td>
+          </tr>
+        </table>
+      </div>
+
+      <footer>Playwright study kit • Architecture + comparison + presentation</footer>
+    </main>
+  </body>
+</html>
