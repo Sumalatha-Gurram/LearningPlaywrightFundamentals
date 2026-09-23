@@ -6,3 +6,9 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+allure-results/
+allure-report/
+
+# Local environment and session data
+.env
+user-session.json
