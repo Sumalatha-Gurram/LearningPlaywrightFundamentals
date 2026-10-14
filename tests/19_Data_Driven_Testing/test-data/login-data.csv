@@ -1,0 +1,8 @@
+description,username,password,should_pass,expected_error,is_active
+valid credentials,admin@gamil.com,admin123,1,,1
+invalid password,admin@gamil.com,wrongpass,0,Invalid credentials,1
+empty username,,admin123,0,Username is required,1
+empty password,admin@gamil.com,,0,Password is required,1
+locked account,locked_user@gamil.com,pass123,0,Account is locked,1
+special chars,admin@gamil.com,p@$$w0rd!,1,,1
+SQL injection attempt,admin' OR '1'='1,password,0,Invalid credentials,1

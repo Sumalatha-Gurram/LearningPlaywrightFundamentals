@@ -1,0 +1,42 @@
+- description: 'valid credentials'
+  username: 'admin@gamil.com'
+  password: 'admin123'
+  should_pass: 1
+  expected_error: ''
+  is_active: 1
+- description: 'invalid password'
+  username: 'admin@gamil.com'
+  password: 'wrongpass'
+  should_pass: 0
+  expected_error: 'Invalid credentials'
+  is_active: 1
+- description: 'empty username'
+  username: ''
+  password: 'admin123'
+  should_pass: 0
+  expected_error: 'Username is required'
+  is_active: 1
+- description: 'empty password'
+  username: 'admin@gamil.com'
+  password: ''
+  should_pass: 0
+  expected_error: 'Password is required'
+  is_active: 1
+- description: 'locked account'
+  username: 'locked_user@gamil.com'
+  password: 'pass123'
+  should_pass: 0
+  expected_error: 'Account is locked'
+  is_active: 1
+- description: 'special chars'
+  username: 'admin@gamil.com'
+  password: 'p@$$w0rd!'
+  should_pass: 1
+  expected_error: ''
+  is_active: 1
+- description: 'SQL injection attempt'
+  username: 'admin'' OR ''1''=''1'
+  password: 'password'
+  should_pass: 0
+  expected_error: 'Invalid credentials'
+  is_active: 1
